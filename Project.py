@@ -1,4 +1,4 @@
-import pygame
+﻿import pygame
 import sys
 
 def GetLegalMoves():
@@ -21,7 +21,7 @@ def GetOccupedPosition(Marker):
 	return Occuped
 
 def IsMatrixFull():
-	return GetLegalMoves().count == 0
+	return len(GetLegalMoves()) == 0
 
 def IsGameWon(Marker):
 	for Row in Matrix:
@@ -43,20 +43,17 @@ def GetOpponentMarker(Marker):
 
 def GetState(Marker):
 	OpponentMarker = GetOpponentMarker(Marker)
-	if IsGameWon(Marker):
+	if IsGameWon(Marker) == True:
 		return 1000
-	if IsGameWon(OpponentMarker):
+	elif IsGameWon(OpponentMarker) == True:
 		return -1000
 	else:
 		return 0
 
-def IsGameDone():
-	if IsMatrixFull or GetState() != 0:
-		return True
-	else:
-		return False
-
 def AI():
+	if Matrix[1][1] == 0:
+		Matrix[1][1] = 'o'
+		return
 	if CountEmptyCells() > 0:
 		Move = MiniMax('o', 0, -1000, 1000)[1]
 		Matrix[Move[0]][Move[1]] = 'o'
@@ -159,10 +156,9 @@ while True:
 		ch = 'x' if (Query - 1) % 2 == 0 else 'o'
 		if IsGameWon(ch) == True:
 			game_over = ch
-		elif IsGameWon(ch) == False:
-			if IsGameWon(GetOpponentMarker(ch)):
-				game_over = GetOpponentMarker(ch)
-		else:
+		elif IsGameWon(ch) == False and IsGameWon(GetOpponentMarker(ch)) == True:
+			game_over = GetOpponentMarker(ch)
+		elif IsMatrixFull() == True:
 			game_over = 'Draw'
 		if game_over:
 			Window.fill(black)
